@@ -20,6 +20,6 @@
         "PASS":"123456",
         "HOST":"localhost",
         "DATABASE":"diplomado_up",
-        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/Rep_local/"
+        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
     }
 }
