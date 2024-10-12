@@ -1,0 +1,25 @@
+{
+    "PRD":
+    {
+        "USER":"root",
+        "PASS":"root",
+        "HOST":"localhost",
+        "DATABASE":"hola"
+    },
+    "DEV":
+    {
+        "USER":"root",
+        "PASS":"IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI",        
+        "HOST":"mysql://root:IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI@junction.proxy.rlwy.net:20477/railway",
+        "HOST1":"mysql://root:IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI@mysql.railway.internal:3306/railway",
+        "DATABASE":"railway"
+    },
+    "LOCAL":
+    {
+        "USER":"root",
+        "PASS":"123456",
+        "HOST":"localhost",
+        "DATABASE":"diplomado_up",
+        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/Rep_local/"
+    }
+}
