@@ -13,8 +13,8 @@ class ParserData():
         self.v_conexion = conexion
     
     #declaracion de construcctor vacio
-    #def __init__(self):
-    #    print("Iniciada la Clase Vacia")
+    def __init__(self):
+        print("Iniciada la Clase Vacia")
 
     #funcion para leer y limpiar el archivo csv
     def readData(self,ruta,file):
@@ -24,18 +24,28 @@ class ParserData():
         #Se lee el arvhivo y se guarda en un dataFrame
         df = pd.read_csv(self.v_file)
         
-        #Se eliminan las columnas Hora, CAntidad y Sentido
-        df.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
+        print("antes")
+        print(len(df))
+        #elimina filas con datos en nulo
+        df.dropna(axis=0)
 
-        #Se eliminan los duplicados
-        df = df.drop_duplicates()
+        #elomina columnas con datos en nulo
+        df.dropna(axis=1)
 
-        #Se cambian los tipos de datos de las columans latitud y longitud
-        df['LATITUD'] = df['LATITUD'].astype('str')
-        df['LONGITUD'] = df['LONGITUD'].astype('str')
+        print("despues")
+        print(len(df))
+        # #Se eliminan las columnas Hora, CAntidad y Sentido
+        # df.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
+
+        # #Se eliminan los duplicados
+        # df = df.drop_duplicates()
+
+        # #Se cambian los tipos de datos de las columans latitud y longitud
+        # df['LATITUD'] = df['LATITUD'].astype('str')
+        # df['LONGITUD'] = df['LONGITUD'].astype('str')
         
-        #Para insertar una nueva columna
-        #df.insert(0,"ID",list(range(1,(len(df)+1))))
+        # #Para insertar una nueva columna
+        # #df.insert(0,"ID",list(range(1,(len(df)+1))))
         
         #logs(Propios)
         print("Datos Tratados")

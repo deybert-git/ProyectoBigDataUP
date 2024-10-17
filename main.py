@@ -13,13 +13,17 @@ with open('./config.json','r') as file:
     config = json.load(file)
 
 #realizar la conexion a la base de datos
-conexion = Connection(USER=config[Entorno]['USER'],
-                      PASS=config[Entorno]['PASS'],
-                      HOST=config[Entorno]['HOST'],
-                      DATABASE=config[Entorno]['DATABASE'])
+# conexion = Connection(USER=config[Entorno]['USER'],
+#                       PASS=config[Entorno]['PASS'],
+#                       HOST=config[Entorno]['HOST'],
+#                       DATABASE=config[Entorno]['DATABASE'])
 
-#Instanciamos la Clase ParserData
-parserData = ParserData(conexion=conexion)
+#Instanciamos la Clase ParserData con conexion
+#parserData = ParserData(conexion=conexion)
+
+#Instanciamos la Clase ParserData sin conexion
+parserData = ParserData()
+
 #Definimos el archivo que se va a leer
 #v_nameFile = "output_file-1.csv"
 v_nameFile = "dataset_flujo_vehicular_formateado_cleaned.csv"
@@ -28,4 +32,4 @@ v_nameFile = "dataset_flujo_vehicular_formateado_cleaned.csv"
 v_df = parserData.readData(ruta=config[Entorno]['REP_LOCAL'],file=v_nameFile)
 
 #Guardamos los datos en una tabla
-parserData.insertTableGeoHash(i_arrayParams=v_df)
+#parserData.insertTableGeoHash(i_arrayParams=v_df)
