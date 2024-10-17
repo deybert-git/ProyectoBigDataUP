@@ -27,10 +27,10 @@ class ParserData():
         print("antes")
         print(len(df))
         #elimina filas con datos en nulo
-        df.dropna(axis=0)
+        df = df.dropna(axis=0)
 
         #elomina columnas con datos en nulo
-        df.dropna(axis=1)
+        df = df.dropna(axis=1)
 
         print("despues")
         print(len(df))
