@@ -8,11 +8,11 @@
     },
     "DEV":
     {
-        "USER":"root",
-        "PASS":"IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI",        
-        "HOST":"mysql://root:IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI@junction.proxy.rlwy.net:20477/railway",
-        "HOST1":"mysql://root:IlQcrtkyyfWWJLYYhlsSAjLUgTKotaZI@mysql.railway.internal:3306/railway",
-        "DATABASE":"railway"
+        "USER":"u9svdbjunzg4tgvy",
+        "PASS":"15mWjXIT0SS56s8GO7Rj",        
+        "HOST":"bww0whow1i1cwt3zatfl-mysql.services.clever-cloud.com",        
+        "DATABASE":"bww0whow1i1cwt3zatfl",
+        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
     },
     "LOCAL":
     {

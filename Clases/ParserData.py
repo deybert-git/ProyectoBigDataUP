@@ -13,8 +13,8 @@ class ParserData():
         self.v_conexion = conexion
     
     #declaracion de construcctor vacio
-    def __init__(self):
-        print("Iniciada la Clase Vacia")
+    #def __init__(self):
+    #    print("Iniciada la Clase Vacia")
 
     #funcion para leer y limpiar el archivo csv
     def readData(self,ruta,file):
@@ -34,15 +34,16 @@ class ParserData():
 
         print("despues")
         print(len(df))
+        
         # #Se eliminan las columnas Hora, CAntidad y Sentido
-        # df.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
+        df.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
 
         # #Se eliminan los duplicados
-        # df = df.drop_duplicates()
+        df = df.drop_duplicates()
 
         # #Se cambian los tipos de datos de las columans latitud y longitud
-        # df['LATITUD'] = df['LATITUD'].astype('str')
-        # df['LONGITUD'] = df['LONGITUD'].astype('str')
+        df['LATITUD'] = df['LATITUD'].astype('str')
+        df['LONGITUD'] = df['LONGITUD'].astype('str')
         
         # #Para insertar una nueva columna
         # #df.insert(0,"ID",list(range(1,(len(df)+1))))
@@ -67,6 +68,7 @@ class ParserData():
         
         except ValueError as err:
             print("Este es el error: "+err)
+        
 
     #funcion para insertar datos en la tabla geo_hash(Multiples Registros)
     def insertTableGeoHash(self,i_arrayParams):
@@ -105,3 +107,4 @@ class ParserData():
         
         except ValueError as err:
             print("Este es el error: "+err)
+        

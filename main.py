@@ -3,8 +3,8 @@ from Clases.ParserData import ParserData
 import json
 
 #Definir el entorno que desea inicializar desde el archivo de configuracion
-Entorno = "LOCAL"
-#Entorno = "DEV"
+#Entorno = "LOCAL"
+Entorno = "DEV"
 v_df = None
 v_nameFile = None
 
@@ -13,16 +13,16 @@ with open('./config.json','r') as file:
     config = json.load(file)
 
 #realizar la conexion a la base de datos
-# conexion = Connection(USER=config[Entorno]['USER'],
-#                       PASS=config[Entorno]['PASS'],
-#                       HOST=config[Entorno]['HOST'],
-#                       DATABASE=config[Entorno]['DATABASE'])
+conexion = Connection(USER=config[Entorno]['USER'],
+                      PASS=config[Entorno]['PASS'],
+                      HOST=config[Entorno]['HOST'],
+                      DATABASE=config[Entorno]['DATABASE'])
 
 #Instanciamos la Clase ParserData con conexion
-#parserData = ParserData(conexion=conexion)
+parserData = ParserData(conexion=conexion)
 
 #Instanciamos la Clase ParserData sin conexion
-parserData = ParserData()
+#parserData = ParserData()
 
 #Definimos el archivo que se va a leer
 #v_nameFile = "output_file-1.csv"
@@ -31,5 +31,8 @@ v_nameFile = "dataset_flujo_vehicular_formateado_cleaned.csv"
 #Guardamos el resultado del dataFrame en una variable
 v_df = parserData.readData(ruta=config[Entorno]['REP_LOCAL'],file=v_nameFile)
 
+print(v_df)
 #Guardamos los datos en una tabla
-#parserData.insertTableGeoHash(i_arrayParams=v_df)
+parserData.insertTableGeoHash(i_arrayParams=v_df)
+#intento cerrar la conexion
+conexion.connClose()

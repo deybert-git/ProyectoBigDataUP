@@ -34,17 +34,42 @@ class Connection():
                 print(err)
 
     def execQuery(self,queryParams,params):
-        cursor = self.conn.cursor()
-        cursor.execute(queryParams,params)
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(queryParams,params)
+
+        except ValueError as err:
+            print("Este es el error: "+err)
+        finally:
+            self.cursor.close()
+            print("Cursor (EQ) cerrado")               
 
     def execQueryArray(self,queryParams,paramsArray):
-        cursor = self.conn.cursor()
-        cursor.executemany(queryParams,paramsArray)
+        try:
+            cursor = self.conn.cursor()
+            cursor.executemany(queryParams,paramsArray)
+
+        except ValueError as err:
+            print("Este es el error: "+err)
+        finally:
+            cursor.close()            
+            print("Cursor (EQA) cerrado")            
     
     def execQuerySimple(self,query):
-        cursor = self.conn.cursor()
-        cursor.execute(query) 
-        self.conn.commit()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query) 
+            self.conn.commit()
+
+        except ValueError as err:
+            print("Este es el error: "+err)
+        finally:
+            cursor.close()      
+            print("Cursor (EQS) cerrado")
 
     def commit(self):
         self.conn.commit()
+    
+    def connClose(self):
+        self.conn.close()
+        print("Conexion Cerrada")
