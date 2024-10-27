@@ -24,18 +24,29 @@ class ParserData():
         #Se lee el arvhivo y se guarda en un dataFrame
         df = pd.read_csv(self.v_file)
         
-        #Se eliminan las columnas Hora, CAntidad y Sentido
+        print("antes")
+        print(len(df))
+        #elimina filas con datos en nulo
+        df = df.dropna(axis=0)
+
+        #elomina columnas con datos en nulo
+        df = df.dropna(axis=1)
+
+        print("despues")
+        print(len(df))
+        
+        # #Se eliminan las columnas Hora, CAntidad y Sentido
         df.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
 
-        #Se eliminan los duplicados
+        # #Se eliminan los duplicados
         df = df.drop_duplicates()
 
-        #Se cambian los tipos de datos de las columans latitud y longitud
+        # #Se cambian los tipos de datos de las columans latitud y longitud
         df['LATITUD'] = df['LATITUD'].astype('str')
         df['LONGITUD'] = df['LONGITUD'].astype('str')
         
-        #Para insertar una nueva columna
-        #df.insert(0,"ID",list(range(1,(len(df)+1))))
+        # #Para insertar una nueva columna
+        # #df.insert(0,"ID",list(range(1,(len(df)+1))))
         
         #logs(Propios)
         print("Datos Tratados")
@@ -57,6 +68,7 @@ class ParserData():
         
         except ValueError as err:
             print("Este es el error: "+err)
+        
 
     #funcion para insertar datos en la tabla geo_hash(Multiples Registros)
     def insertTableGeoHash(self,i_arrayParams):
@@ -95,3 +107,4 @@ class ParserData():
         
         except ValueError as err:
             print("Este es el error: "+err)
+        
