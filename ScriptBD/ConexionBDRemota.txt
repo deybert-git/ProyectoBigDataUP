@@ -1,0 +1,9 @@
+https://api.clever-cloud.com/v2/sessions/login?fromAuthorize=true&partner_id=01907806-284e-1b4d-029a-20b9ebfcb8c0
+Correo: deybert@hotmail.com
+Pass: Dey2593121
+
+Instancia
+"USER":"u9svdbjunzg4tgvy",
+"PASS":"15mWjXIT0SS56s8GO7Rj",        
+"HOST":"bww0whow1i1cwt3zatfl-mysql.services.clever-cloud.com",              
+"DATABASE":"bww0whow1i1cwt3zatfl",
