@@ -18,7 +18,7 @@ class ParserData():
     # def __init__(self):
     #    print("Iniciada la Clase Vacia")
 
-    #funcion para leer y limpiar el archivo csv
+    #funcion para leer y limpiar el archivo csv, limpia solo filas con datos nulos
     def readData(self,ruta,file):
          #Unifica la ruta mas nombre del archivo
         self.v_file = ruta+file  
@@ -38,6 +38,7 @@ class ParserData():
         #retornamos el dataFrame
         return df
 
+    #Funcion que permite poblar la tabla de Ubicaciones con coordenadas y geohash
     def insertTablaUbicacion(self,i_arrayVehiculos,i_arraySubtes):
         #Variables
         sql_insert = """ insert into ubicacion(id_ubicacion,latitud,longitud,geohash) values(%s,%s,%s,%s) """
@@ -72,6 +73,7 @@ class ParserData():
         except ValueError as err:
             print("Este es el error: "+err)
     
+    #Funcion que permite poblar la tabla con los subtes, molitenes y ubicaciones
     def insertTablaSubte(self,i_arraySubtes,i_arrayUbicacion):
         #Variables
         sql_insert = """ insert into subte(id_subte,id_ubicacion,linea,estacion,molinete) values(%s,%s,%s,%s,%s) """
@@ -108,7 +110,44 @@ class ParserData():
         except ValueError as err:
             print("Este es el error: "+err)   
         
-    
+    #Funcion que permite poblar la tabla fechas de calendario
+    def insertTablaFechas(self,i_anio_d,i_anio_h):
+        #Variables
+        sql_insert = """ insert into fechas(fecha,dia,mes,anio) values(%s,%s,%s,%s) """
+        v_array = []
+
+        if i_anio_d < i_anio_h:
+            #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones      
+            fechas = pd.date_range(start=i_anio_d+'-01-01', end=i_anio_h+'-12-31', freq='D')
+            df_fechas = pd.DataFrame(fechas, columns=['FECHA'])
+            df_fechas = df_fechas[['FECHA']].assign(DIA = df_fechas['FECHA'].dt.day,MES=df_fechas['FECHA'].dt.month,ANIO=df_fechas['FECHA'].dt.year)
+            #df_fechas['Dia'] = df_fechas['Fecha'].dt.day
+            #df_fechas['Mes'] = df_fechas['Fecha'].dt.month
+            #df_fechas['Anio'] = df_fechas['Fecha'].dt.year
+            #df_fechas.insert(0,"ID_FECHA",list(range(1,(len(df_fechas)+1))))  
+        else:
+            raise ValueError("Datos inconsistentes")
+
+        #Se recorre el df y se pasa a un arreglo para insertarlo en la tabla
+        for i in range(len(df_fechas)):
+            v_array.append((df_fechas.iloc[i]['FECHA'].strftime('%Y-%m-%d'),                            
+                            int(df_fechas.iloc[i]['DIA']),
+                            int(df_fechas.iloc[i]['MES']),
+                            int(df_fechas.iloc[i]['ANIO'])
+                        ))      
+
+        try:
+            self.v_conexion.execQueryArray(queryParams=sql_insert,paramsArray=v_array)
+            self.v_conexion.commit()
+
+            #Log
+            print("Se insertaron los Datos de subtes Correctamente")
+            
+            #Retormamos el df
+            return df_fechas
+        
+        except ValueError as err:
+            print("Este es el error: "+err)
 
     #-------------------------PRUEBAS-----------------------------------#
     #funcion para insertar datos en la tabla geo_hash(un solo registro)
@@ -124,59 +163,5 @@ class ParserData():
             print(i_params)
         
         except ValueError as err:
-            print("Este es el error: "+err)
-        
-
-    #funcion para insertar datos en la tabla geo_hash(Multiples Registros)
-    def insertTableGeoHash(self,i_arrayParams):
-        sql_insert = """ insert into geo_hash(id,geo_hash,latitud,longitud) values(%s,%s,%s,%s) """
-        v_array = []
-
-        # #Se eliminan las columnas Hora, CAntidad y Sentido
-        i_arrayParams.drop(["HORA","CANTIDAD","SENTIDO"],inplace=True,axis=1)
-
-        # #Se eliminan los duplicados
-        i_arrayParams = i_arrayParams.drop_duplicates()
-
-        #Se cambian los tipos de datos de las columans latitud y longitud
-        #i_arrayParams['LATITUD'] = i_arrayParams['LATITUD'].astype('str')
-        #i_arrayParams['LONGITUD'] = i_arrayParams['LONGITUD'].astype('str')
-        
-        #Otra forma de cambiar el tipo de dato pero igual da una advertencia
-        #i_arrayParams.loc[:,'LATITUD'] = i_arrayParams.loc[:,'LATITUD'].astype(str)
-        #i_arrayParams.loc[:,'LONGITUD'] = i_arrayParams.loc[:,'LONGITUD'].astype('str')
-
-        #opcion 1 544ms
-        #for datos in i_arrayParams.itertuples():
-        #    i=i+1
-        #    v_array.append((i,
-        #                   datos.CODIGO_LOCACION,
-        #                   datos.LATITUD,
-        #                   datos.LONGITUD)) 
-        
-        #opcion 2 48s
-        #for index, row in i_arrayParams.iterrows():
-        #    v_array.append((i+1,
-        #                   row['CODIGO_LOCACION'],
-        #                   row['LATITUD'],
-        #                   row['LONGITUD']))
-
-        #opcion 3 51.4 ms
-        for i in range(len(i_arrayParams)):
-            v_array.append((i+1,
-                            i_arrayParams.iloc[i]['CODIGO_LOCACION'],
-                            str(i_arrayParams.iloc[i]['LATITUD']),
-                            str(i_arrayParams.iloc[i]['LONGITUD'])))
-        
-        #print(v_array)            
-        try:
-            self.v_conexion.execQueryArray(queryParams=sql_insert,paramsArray=v_array)
-            self.v_conexion.commit()
-
-            print("Se insertaron los siguientes datos:")
-            print(v_array)
-        
-        except ValueError as err:
-            print("Este es el error: "+err)
-    
+            print("Este es el error: "+err)   
             
