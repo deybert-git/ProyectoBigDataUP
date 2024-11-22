@@ -280,7 +280,7 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de subtes Correctamente")
+            print("Se insertaron los Datos de Movimientos de subtes Correctamente")
 
             #consulta a la base de datos y retorna los datos de la base
             sql_select = """ select id_subte as ID_SUBTE, id_fecha as ID_FECHA, hora as HORA, turno as TURNO, cantidad as CANT from mov_subte """
@@ -293,27 +293,42 @@ class ParserData():
             print("Este es el error: "+err) 
 
     #Funcion que permite cargar los datos en la tabla de movimientos de vehiculos
-    def insertTablaMovVehiculo(self,i_arrayVehiculos):
+    def insertTablaMovVehiculo(self,i_arrayVehiculos,i_arrayUbicacion,i_arrayFechas):
         #Variables
-        sql_insert = """ insert into subte(id_subte,id_ubicacion,linea,estacion,molinete) values(%s,%s,%s,%s,%s) """
+        sql_insert = """ insert into mov_vehiculo(id_ubicacion,id_fecha,hora,cantidad) values(%s,%s,%s,%s) """
         v_array = []
 
+        #consulta a la base de datos y retorna los datos de la base
+        sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
+        df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
-        df_tlbSubte = i_arraySubtes[["lat","long","linea","estacion"]].assign(molinte = i_arraySubtes["dom_orig"].fillna(i_arraySubtes["calle"]))
-        df_tlbSubte = df_tlbSubte.drop_duplicates()
-        df_tlbSubte = df_tlbSubte.sort_values(by=["linea","estacion"])
-        df_tlbSubte.columns = ['LATITUD','LONGITUD','LINEA','ESTACION','MOLINETE']
-        df_tlbSubte = pd.merge(df_tlbSubte,i_arrayUbicacion,on=['LATITUD', 'LONGITUD'], how='inner')
-        df_tlbSubte.insert(0,"ID_SUB",list(range(1,(len(df_tlbSubte)+1))))
-        df_tlbSubte = df_tlbSubte[["ID_SUB","ID","LINEA","ESTACION","MOLINETE"]]        
+        df_tlbMovVehi = i_arrayVehiculos[["FECHA","HORA","CANTIDAD","LATITUD","LONGITUD"]]        
+
+        #Merchamos la Fecha
+        df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]]
+        df_tlbFecha.columns = ["ID_FECHA","FECHA"]  
+        df_tlbFecha['FECHA'] = pd.to_datetime(df_tlbFecha['FECHA']) 
+        df_tlbMovVehi['FECHA'] = pd.to_datetime(df_tlbMovVehi['FECHA'])        
+        df_tlbMovVehi = pd.merge(df_tlbMovVehi,df_tlbFecha,on=['FECHA'], how='inner')   
+
+        #Merchamos las coordenadas
+        i_arrayUbicacion["LATITUD"] = pd.to_numeric(i_arrayUbicacion["LATITUD"], errors='coerce')
+        i_arrayUbicacion["LONGITUD"] = pd.to_numeric(i_arrayUbicacion["LONGITUD"], errors='coerce')        
+        df_tlbMovVehi = pd.merge(df_tlbMovVehi,i_arrayUbicacion,on=['LATITUD', 'LONGITUD'], how='inner') 
+
+        #Solo inserta la diferencia de fechas que estan en la bd
+        if len(df_tlbMovVehiBD) > 0:             
+            df_tlbMovVehi = df_tlbMovVehi[["ID","ID_FECHA","HORA","CANTIDAD"]]             
+            df_tlbMovVehi = pd.merge(df_tlbMovVehi, df_tlbMovVehiBD, how='left', indicator=True)
+            df_tlbMovVehi = df_tlbMovVehi[df_tlbMovVehi['_merge'] == 'left_only'].drop(columns=['_merge'])   
         
         #Se recorre el df y se pasa a un arreglo para insertarlo en la tabla
-        for i in range(len(df_tlbSubte)):
-            v_array.append((int(df_tlbSubte.iloc[i]['ID_SUB']),                            
-                            int(df_tlbSubte.iloc[i]['ID']),
-                            df_tlbSubte.iloc[i]['LINEA'],
-                            df_tlbSubte.iloc[i]['ESTACION'],
-                            df_tlbSubte.iloc[i]['MOLINETE']
+        for i in range(len(df_tlbMovVehi)):
+            v_array.append((int(df_tlbMovVehi.iloc[i]['ID']),                            
+                            int(df_tlbMovVehi.iloc[i]['ID_FECHA']),
+                            df_tlbMovVehi.iloc[i]['HORA'],
+                            int(df_tlbMovVehi.iloc[i]['CANTIDAD'])
                         ))
 
         try:
@@ -321,10 +336,14 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de subtes Correctamente")
+            print("Se insertaron los Datos de Movimientos de Vehiculos Correctamente")
+
+            #consulta a la base de datos y retorna los datos de la base
+            sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
+            df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
             
             #Retormamos el df
-            return df_tlbSubte
+            return df_tlbMovVehiBD
         
         except ValueError as err:
             print("Este es el error: "+err)   
