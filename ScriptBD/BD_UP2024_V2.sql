@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: bww0whow1i1cwt3zatfl-mysql.services.clever-cloud.com:3306
--- Tiempo de generación: 05-11-2024 a las 02:18:09
+-- Tiempo de generación: 22-11-2024 a las 16:08:21
 -- Versión del servidor: 8.0.15-5
 -- Versión de PHP: 8.2.21
 
@@ -45,7 +45,7 @@ CREATE TABLE `fechas` (
 CREATE TABLE `mov_subte` (
   `id_subte` int(11) NOT NULL,
   `id_fecha` int(11) NOT NULL,
-  `hora` timestamp NOT NULL,
+  `hora` varchar(20) DEFAULT NULL,
   `turno` varchar(50) NOT NULL,
   `cantidad` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -59,7 +59,7 @@ CREATE TABLE `mov_subte` (
 CREATE TABLE `mov_vehiculo` (
   `id_ubicacion` int(11) NOT NULL,
   `id_fecha` int(11) NOT NULL,
-  `hora` timestamp NOT NULL,
+  `hora` varchar(20) NOT NULL,
   `cantidad` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

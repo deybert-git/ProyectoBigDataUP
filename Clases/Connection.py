@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
+from sqlalchemy import create_engine
 
 class Connection():
     USER = None
@@ -8,6 +9,7 @@ class Connection():
     DATABASE = None
 
     conn = None
+    connAlchemy = None
 
     def __init__(self,USER,PASS,HOST,DATABASE):
         self.USER = USER
@@ -22,8 +24,14 @@ class Connection():
                                                 database=self.DATABASE)
             cnx.autocommit = False
 
+            #engine = create_engine('mysql+mysqlconnector://root:@localhost/mi_base_datos')
+            #engine = create_engine('mysql+mysqlconnector://usuario:contraseña@host:puerto/base_datos')
+
+            engine = create_engine(f'mysql+mysqlconnector://{self.USER}:{self.PASS}@{self.HOST}:3306/{self.DATABASE}')
+
             print("Conectado a BD")
             self.conn = cnx
+            self.connAlchemy = engine
 
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

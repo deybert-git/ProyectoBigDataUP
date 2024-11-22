@@ -27,7 +27,7 @@ class ParserData():
             texto = re.sub(r'[^A-Za-z0-9\s]', '', texto)  # Eliminar caracteres especiales            
         return texto
 
-    #funcion para leer y limpiar el archivo csv, limpia solo filas con datos nulos
+#funcion para leer y limpiar el archivo csv, limpia solo filas con datos nulos
     def readData(self,ruta,file):
          #Unifica la ruta mas nombre del archivo
         self.v_file = ruta+file  
@@ -62,7 +62,7 @@ class ParserData():
         #retornamos el dataFrame
         return df
 
-    #Funcion que permite poblar la tabla de Ubicaciones con coordenadas y geohash
+#Funcion que permite poblar la tabla de Ubicaciones con coordenadas y geohash
     def insertTablaUbicacion(self,i_arrayVehiculos,i_arraySubtes):
         #Variables
         sql_insert = """ insert into ubicacion(id_ubicacion,latitud,longitud,geohash) values(%s,%s,%s,%s) """
@@ -70,7 +70,7 @@ class ParserData():
 
         #consulta a la base de datos y retorna los datos de la base
         sql_select = """ select LATITUD,LONGITUD from ubicacion """
-        df_ubicacionBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+        df_ubicacionBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
         df_ubicacion1 = i_arrayVehiculos[["LATITUD","LONGITUD","GEOHASH"]]
@@ -107,11 +107,11 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de Ubicacion Correctamente")
+            print("Se insertaron los Datos de UBICACION Correctamente")
             
             #consulta a la base de datos y retorna los datos de la base
             sql_select = """ select id_ubicacion as ID, LATITUD, LONGITUD, GEOHASH from ubicacion """
-            df_ubicacionBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+            df_ubicacionBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
             
             #Retormamos el df
             return df_ubicacionBD
@@ -119,7 +119,7 @@ class ParserData():
         except ValueError as err:
             print("Este es el error: "+err)
     
-    #Funcion que permite poblar la tabla con los subtes, molitenes y ubicaciones
+#Funcion que permite poblar la tabla con los subtes, molitenes y ubicaciones
     def insertTablaSubte(self,i_arraySubtes,i_arrayUbicacion):
         #Variables
         sql_insert = """ insert into subte(id_subte,id_ubicacion,linea,estacion,molinete) values(%s,%s,%s,%s,%s) """
@@ -127,7 +127,7 @@ class ParserData():
 
         #consulta a la base de datos y retorna los datos de la base
         sql_select = """ select LINEA, ESTACION from subte """
-        df_subteBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+        df_subteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
         #df_tlbSubte = i_arraySubtes[["lat","long","linea","estacion"]].assign(molinte = i_arraySubtes["dom_orig"].fillna(i_arraySubtes["calle"]))
@@ -160,11 +160,11 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de subtes Correctamente")
+            print("Se insertaron los Datos de SUBTES Correctamente")
 
             #consulta a la base de datos y retorna los datos de la base
             sql_select = """ select * from subte """
-            df_subteBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+            df_subteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
             
             #Retormamos el df
             return df_subteBD
@@ -180,11 +180,7 @@ class ParserData():
 
         #consulta a la base de datos y retorna los datos de la base
         sql_select = """ select date_format(FECHA,'%Y-%m-%d') FECHA, DIA, MES, ANIO from fechas """
-        df_fechasBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
-
-        # if len(df_fechasBD) > 0:
-        #     return df_fechasBD
-        #-----------------------------------------------------------
+        df_fechasBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)        
 
         #Evalua si los datos vienen o no
         if len(i_anio_d) == 0 or len(i_anio_h) == 0:
@@ -220,10 +216,10 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de Fechas Correctamente")
+            print("Se insertaron los Datos de FECHAS Correctamente")
 
             sql_select = """ select * from fechas """
-            df_fechasBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+            df_fechasBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
             
             #Retormamos el df
             return df_fechasBD
@@ -231,7 +227,7 @@ class ParserData():
         except ValueError as err:
             print("Este es el error: "+err)
     
-    #Funcion que permite cargar los datos en la tabla de movimientos de Subte
+#Funcion que permite cargar los datos en la tabla de movimientos de Subte
     def insertTablaMovSubte(self,i_arraySubtes,i_arrayBocaSubtes,i_arrayFechas):
         #Variables
         sql_insert = """ insert into mov_subte(id_subte,id_fecha,hora,turno,cantidad) values(%s,%s,%s,%s,%s) """
@@ -239,7 +235,7 @@ class ParserData():
 
         #consulta a la base de datos y retorna los datos de la base
         sql_select = """ select id_subte as ID_SUBTE, id_fecha as ID_FECHA, hora as HORA, turno as TURNO, cantidad as CANT from mov_subte """
-        df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+        df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
         df_tlbMovSubte = i_arraySubtes[["FECHA","DESDE","TURNO","LINEA","ESTACION","pax_TOTAL"]]
@@ -247,7 +243,7 @@ class ParserData():
         df_tlbMovSubte.columns = ["FECHA","DESDE","TURNO","LINEA","ESTACION","CANT"]        
         
         #Merchamos la Fecha
-        df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]]
+        df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]].copy()
         df_tlbFecha.columns = ["ID_FECHA","FECHA"]  
         df_tlbFecha['FECHA'] = pd.to_datetime(df_tlbFecha['FECHA']) 
         df_tlbMovSubte['FECHA'] = pd.to_datetime(df_tlbMovSubte['FECHA'])        
@@ -280,11 +276,11 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de Movimientos de subtes Correctamente")
+            print("Se insertaron los Datos de MOV SUBTES Correctamente")
 
             #consulta a la base de datos y retorna los datos de la base
             sql_select = """ select id_subte as ID_SUBTE, id_fecha as ID_FECHA, hora as HORA, turno as TURNO, cantidad as CANT from mov_subte """
-            df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+            df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
             
             #Retormamos el df
             return df_movSubteBD
@@ -292,7 +288,7 @@ class ParserData():
         except ValueError as err:
             print("Este es el error: "+err) 
 
-    #Funcion que permite cargar los datos en la tabla de movimientos de vehiculos
+#Funcion que permite cargar los datos en la tabla de movimientos de vehiculos
     def insertTablaMovVehiculo(self,i_arrayVehiculos,i_arrayUbicacion,i_arrayFechas):
         #Variables
         sql_insert = """ insert into mov_vehiculo(id_ubicacion,id_fecha,hora,cantidad) values(%s,%s,%s,%s) """
@@ -300,13 +296,13 @@ class ParserData():
 
         #consulta a la base de datos y retorna los datos de la base
         sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
-        df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+        df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
-        df_tlbMovVehi = i_arrayVehiculos[["FECHA","HORA","CANTIDAD","LATITUD","LONGITUD"]]        
+        df_tlbMovVehi = i_arrayVehiculos[["FECHA","HORA","CANTIDAD","LATITUD","LONGITUD"]].copy()        
 
         #Merchamos la Fecha
-        df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]]
+        df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]].copy()
         df_tlbFecha.columns = ["ID_FECHA","FECHA"]  
         df_tlbFecha['FECHA'] = pd.to_datetime(df_tlbFecha['FECHA']) 
         df_tlbMovVehi['FECHA'] = pd.to_datetime(df_tlbMovVehi['FECHA'])        
@@ -336,31 +332,16 @@ class ParserData():
             self.v_conexion.commit()
 
             #Log
-            print("Se insertaron los Datos de Movimientos de Vehiculos Correctamente")
+            print("Se insertaron los Datos de MOV VEHICULOS Correctamente")
 
             #consulta a la base de datos y retorna los datos de la base
             sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
-            df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.conn)
+            df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
             
             #Retormamos el df
             return df_tlbMovVehiBD
         
         except ValueError as err:
-            print("Este es el error: "+err)   
-    
-    #-------------------------PRUEBAS-----------------------------------#
-    #funcion para insertar datos en la tabla geo_hash(un solo registro)
-    def insertSimpleGeoHash(self):
-        sql_insert = """ insert into geo_hash(id,geo_hash,latitud,longitud) values(%s,%s,%s,%s) """
-        i_params = (1,"geohash1","123.456","987.456")
-
-        try:
-            self.v_conexion.execQuery(sql_insert,i_params)
-            self.v_conexion.commit()
-
-            print("Se insertaron estos datos:")
-            print(i_params)
-        
-        except ValueError as err:
-            print("Este es el error: "+err)   
+            print("Este es el error: "+err)
+       
             

@@ -41,7 +41,7 @@ df_bocaSubtes = parserData.readData(ruta=config[Entorno]['REP_LOCAL'],file=v_nam
 #print("Datos Tratados Bocas Cantidad "+str(len(df_bocaSubtes)))
 #print(df_bocaSubtes.head(5))
 
-#---------------------------PASOS--------------------------
+#---------------------------TABLAS--------------------------
 # 1.- Poblamos la tabla de Fechas
 df_fechas = parserData.insertTablaFechas(i_anio_d='2020',i_anio_h='2030')
 #print(df_fechas.head(5))
@@ -51,16 +51,16 @@ df_RUbicacion = parserData.insertTablaUbicacion(i_arrayVehiculos=df_vehicular.co
 #print(df_RUbicacion.head(5))
 
 # 3.- Poblamos la tabla de subte
-#df_RSubte = parserData.insertTablaSubte(i_arraySubtes=df_bocaSubtes.copy(),i_arrayUbicacion=df_RUbicacion.copy())
+df_RSubte = parserData.insertTablaSubte(i_arraySubtes=df_bocaSubtes.copy(),i_arrayUbicacion=df_RUbicacion.copy())
 #print(df_RSubte.head(5))
 
 # 4.- Guardamos Movimientos de Vehiculos
-#df_movSubte = parserData.insertTablaMovSubte(i_arraySubtes=df_subte.copy(),i_arrayBocaSubtes=df_RSubte,i_arrayFechas=df_fechas.copy())
+df_movSubte = parserData.insertTablaMovSubte(i_arraySubtes=df_subte.copy(),i_arrayBocaSubtes=df_RSubte,i_arrayFechas=df_fechas.copy())
 #print(df_movSubte.head(5))
 
 # 5.- Guardamos Movimientos de Subte
 df_movVehiculo = parserData.insertTablaMovVehiculo(i_arrayVehiculos=df_vehicular.copy(),i_arrayUbicacion=df_RUbicacion.copy(),i_arrayFechas=df_fechas.copy())
-print(df_movVehiculo.head(5))
+#print(df_movVehiculo.head(5))
 
 #Se cierra la conexion a la BD
 conexion.connClose()
