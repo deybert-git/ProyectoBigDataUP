@@ -12,14 +12,16 @@
         "PASS":"15mWjXIT0SS56s8GO7Rj",        
         "HOST":"bww0whow1i1cwt3zatfl-mysql.services.clever-cloud.com",        
         "DATABASE":"bww0whow1i1cwt3zatfl",
-        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/Procesados/"
+        "PORT":"3306",
+        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
     },
-    "LOCAL":
+    "DEV1.1":
     {
-        "USER":"root",
-        "PASS":"123456",
-        "HOST":"localhost",
-        "DATABASE":"diplomado_up",
+        "USER":"uzexwoh2xprm7uqu",
+        "PASS":"uJqtTRHNxiGS50f13mMZ",        
+        "HOST":"bojvkmc62wwgehowtja2-mysql.services.clever-cloud.com", 
+        "DATABASE":"bojvkmc62wwgehowtja2",
+        "PORT":"3306",
         "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
     }
 }
