@@ -1,10 +1,8 @@
 import pandas as pd
-import numpy as np
-import json
-import chardet
 import pygeohash as pygeo
 from unidecode import unidecode
-import re
+from pathlib import Path
+import os
 
 class ParserDataBD():
 
@@ -61,6 +59,7 @@ class ParserDataBD():
                         ))
 
         try:
+            
             self.v_conexion.execQueryArray(queryParams=sql_insert,paramsArray=v_array)
             self.v_conexion.commit()
 
@@ -192,19 +191,20 @@ class ParserDataBD():
         v_array = []
 
         #consulta a la base de datos y retorna los datos de la base
-        sql_select = """ select id_subte as ID_SUBTE, id_fecha as ID_FECHA, hora as HORA, turno as TURNO, cantidad as CANT from mov_subte """
-        df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
+        # sql_select = """ select id_subte as ID_SUBTE, id_fecha as ID_FECHA, hora as HORA, turno as TURNO, cantidad as CANT from mov_subte """
+        # df_movSubteBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
-        df_tlbMovSubte = i_arraySubtes[["FECHA","DESDE","TURNO","LINEA","ESTACION","pax_TOTAL"]]
-        df_tlbMovSubte = df_tlbMovSubte.sort_values(by=["LINEA","ESTACION"])
-        df_tlbMovSubte.columns = ["FECHA","DESDE","TURNO","LINEA","ESTACION","CANT"]        
+        df_tlbMovSubte = i_arraySubtes[["FECHA","DESDE","LINEA_L","ESTACION","pax_TOTAL"]].copy()
+        df_tlbMovSubte["TURNO"] = "Mañana"
+        df_tlbMovSubte = df_tlbMovSubte.sort_values(by=["LINEA_L","ESTACION"])
+        df_tlbMovSubte.columns = ["FECHA","DESDE","LINEA","ESTACION","CANT","TURNO"]        
         
         #Merchamos la Fecha
         df_tlbFecha = i_arrayFechas[["id_fecha","fecha"]].copy()
         df_tlbFecha.columns = ["ID_FECHA","FECHA"]  
-        df_tlbFecha['FECHA'] = pd.to_datetime(df_tlbFecha['FECHA']) 
-        df_tlbMovSubte['FECHA'] = pd.to_datetime(df_tlbMovSubte['FECHA'])        
+        df_tlbFecha['FECHA'] = pd.to_datetime(df_tlbFecha['FECHA'], format="%d/%m/%Y") 
+        df_tlbMovSubte['FECHA'] = pd.to_datetime(df_tlbMovSubte['FECHA'], format="%d/%m/%Y")        
         df_tlbMovSubte = pd.merge(df_tlbMovSubte,df_tlbFecha,on=['FECHA'], how='inner')
         
         #Merchamos la linea y estacion
@@ -214,10 +214,10 @@ class ParserDataBD():
         df_tlbMovSubte = pd.merge(df_tlbMovSubte,df_tblBocaSubtes,on=["LINEA","ESTACION"], how='inner')
 
         #Solo inserta la diferencia de fechas que estan en la bd
-        if len(df_movSubteBD) > 0:             
-            df_tlbMovSubte = df_tlbMovSubte[["ID_SUBTE","ID_FECHA","DESDE","TURNO","CANT"]]             
-            df_tlbMovSubte = pd.merge(df_tlbMovSubte, df_movSubteBD, how='left', indicator=True)
-            df_tlbMovSubte = df_tlbMovSubte[df_tlbMovSubte['_merge'] == 'left_only'].drop(columns=['_merge'])
+        # if len(df_movSubteBD) > 0:             
+        #     df_tlbMovSubte = df_tlbMovSubte[["ID_SUBTE","ID_FECHA","DESDE","TURNO","CANT"]]             
+        #     df_tlbMovSubte = pd.merge(df_tlbMovSubte, df_movSubteBD, how='left', indicator=True)
+        #     df_tlbMovSubte = df_tlbMovSubte[df_tlbMovSubte['_merge'] == 'left_only'].drop(columns=['_merge'])
         
                        
         # Se recorre el df y se pasa a un arreglo para insertarlo en la tabla
@@ -253,8 +253,8 @@ class ParserDataBD():
         v_array = []
 
         #consulta a la base de datos y retorna los datos de la base
-        sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
-        df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
+        # sql_select = """ select id_ubicacion as ID_UBICACION, id_fecha ID_FECHA, hora HORA, cantidad CANTIDAD from mov_vehiculo """
+        # df_tlbMovVehiBD = pd.read_sql_query(sql_select,self.v_conexion.connAlchemy)
 
         #Tratamos los datos de los movimientos de vehiculos y subtes para guardar las ubicaciones
         df_tlbMovVehi = i_arrayVehiculos[["FECHA","HORA","CANTIDAD","LATITUD","LONGITUD"]].copy()        
@@ -271,11 +271,11 @@ class ParserDataBD():
         i_arrayUbicacion["LONGITUD"] = pd.to_numeric(i_arrayUbicacion["LONGITUD"], errors='coerce')        
         df_tlbMovVehi = pd.merge(df_tlbMovVehi,i_arrayUbicacion,on=['LATITUD', 'LONGITUD'], how='inner') 
 
-        #Solo inserta la diferencia de fechas que estan en la bd
-        if len(df_tlbMovVehiBD) > 0:             
-            df_tlbMovVehi = df_tlbMovVehi[["ID","ID_FECHA","HORA","CANTIDAD"]]             
-            df_tlbMovVehi = pd.merge(df_tlbMovVehi, df_tlbMovVehiBD, how='left', indicator=True)
-            df_tlbMovVehi = df_tlbMovVehi[df_tlbMovVehi['_merge'] == 'left_only'].drop(columns=['_merge'])   
+        # #Solo inserta la diferencia de fechas que estan en la bd
+        # if len(df_tlbMovVehiBD) > 0:             
+        #     df_tlbMovVehi = df_tlbMovVehi[["ID","ID_FECHA","HORA","CANTIDAD"]]             
+        #     df_tlbMovVehi = pd.merge(df_tlbMovVehi, df_tlbMovVehiBD, how='left', indicator=True)
+        #     df_tlbMovVehi = df_tlbMovVehi[df_tlbMovVehi['_merge'] == 'left_only'].drop(columns=['_merge'])   
         
         #Se recorre el df y se pasa a un arreglo para insertarlo en la tabla
         for i in range(len(df_tlbMovVehi)):
@@ -301,5 +301,21 @@ class ParserDataBD():
         
         except ValueError as err:
             print("Este es el error: "+err)
-       
-            
+
+#Funcion que permite cargar los datos en la tabla de movimientos de Subte
+    def insertLotesMovSubte(self,i_ruta,i_arrayBocaSubtes,i_arrayFechas): 
+       directorioOrg = Path(i_ruta+"/Procesados/") 
+       df_bocaSubte = i_arrayBocaSubtes.copy()
+       df_fechas = i_arrayFechas.copy()
+       lotes = 100000
+
+       for file_name in os.listdir(directorioOrg):
+            if "PAX15" in file_name and file_name.endswith(".csv"):
+                file_path = os.path.join(directorioOrg, file_name)
+                cont = 0
+                df = pd.read_csv(file_path, sep=',', encoding='utf-8')
+                
+                for i in range(0, len(df), lotes):
+                    cont += 1                   
+                    self.insertTablaMovSubte(df[i:i + lotes],df_bocaSubte,df_fechas)
+                print(cont)

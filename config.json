@@ -23,5 +23,14 @@
         "DATABASE":"bojvkmc62wwgehowtja2",
         "PORT":"3306",
         "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
+    },
+    "DEV1.2":
+    {
+        "USER":"udwot4btklzguaz8",
+        "PASS":"6gRLVb6oRG9SbhCqFOet",        
+        "HOST":"bkszc7akpfonprqakjbk-mysql.services.clever-cloud.com", 
+        "DATABASE":"bkszc7akpfonprqakjbk",
+        "PORT":"3306",
+        "REP_LOCAL":"D:/Proyectos/Diplomado BigData/Trabajo Practico/BDProyecto/DataSet/"
     }
 }
