@@ -316,6 +316,10 @@ class ParserDataBD():
                 df = pd.read_csv(file_path, sep=',', encoding='utf-8')
                 
                 for i in range(0, len(df), lotes):
-                    cont += 1                   
-                    self.insertTablaMovSubte(df[i:i + lotes],df_bocaSubte,df_fechas)
+                    cont += 1   
+                    try:                
+                        self.insertTablaMovSubte(df[i:i + lotes],df_bocaSubte,df_fechas)
+                    except:
+                        print("Error en el lote ",cont, " de ",file_name)
+                        
                 print(cont)

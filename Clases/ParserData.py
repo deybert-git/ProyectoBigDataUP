@@ -78,6 +78,20 @@ class ParserData():
         except:
             return delimiter
 
+# Funcion que permite identificar el turno mediante la hora   
+    def detectar_turno(self,i_hora): 
+        result = "S/T"       
+        
+        hora = int(i_hora.split(':')[0])
+        if hora > 0 and hora <= 12:
+            result = "Manana"
+        elif hora > 12 and hora <= 18:
+            result = "Tarde"
+        else:
+            result = "Noche"
+       
+        return result
+
 #funcion para leer un archivo y devolverlo en un dataframe
     def readCSV(self,i_ruta,i_file):
         #Directorio
@@ -126,7 +140,8 @@ class ParserData():
 
         #Se crea una nueva columna con la linea de metro en letra
         if i_textFileName == "PAX15":        
-            final_dataframe['LINEA_L'] = final_dataframe['LINEA'].str[-1:]  
+            final_dataframe['LINEA_L'] = final_dataframe['LINEA'].str[-1:] 
+            final_dataframe['TURNO'] = final_dataframe['DESDE'].apply(self.detectar_turno)
 
         #Limpieza de valores nulos
         if i_textFileName != "bocas-de-subte":
@@ -188,7 +203,8 @@ class ParserData():
                     
                     #Condiciones para los arvhivos de mov de subte
                     if i_textFileName == "PAX15":        
-                        df['LINEA_L'] = df['LINEA'].str[-1:]                        
+                        df['LINEA_L'] = df['LINEA'].str[-1:]  
+                        df['TURNO'] = df['DESDE'].apply(self.detectar_turno)                      
 
                         #Se homologa los nombres de las bocas de subte
                         self.homologaBocasSubte(df)                     
